@@ -39,45 +39,45 @@ SharedMemRingBuffer gSharedMemRingBuffer (SLEEPING_WAIT);
 ///////////////////////////////////////////////////////////////////////////////
 void TestFunc()
 {
-    char    szMsg[1024];
-    int64_t nMyIndex = -1;
-    char    szRawData[1024];
+	char    szMsg[1024];
+	int64_t nMyIndex = -1;
+	char    szRawData[1024];
 
-    for(int i=1; i <= LOOP_CNT  ; i++) 
-    {
-        PositionInfo my_data;
-        int nWritePosition = 0;
+	for(int i=1; i <= LOOP_CNT  ; i++) 
+	{
+		PositionInfo my_data;
+		int nWritePosition = 0;
 
-        if(i%2==0)
-        {
-            my_data.nLen = snprintf(szRawData, sizeof(szRawData), "raw data  %06d", i);
-        }
-        else
-        {
-            my_data.nLen = snprintf(szRawData, sizeof(szRawData), "raw data  %08d", i);
-        }
+		if(i%2==0)
+		{
+			my_data.nLen = snprintf(szRawData, sizeof(szRawData), "raw data  %06d", i);
+		}
+		else
+		{
+			my_data.nLen = snprintf(szRawData, sizeof(szRawData), "raw data  %08d", i);
+		}
 
-        nMyIndex = gSharedMemRingBuffer.ClaimIndex(my_data.nLen, & nWritePosition );
+		nMyIndex = gSharedMemRingBuffer.ClaimIndex(my_data.nLen, & nWritePosition );
 
-        my_data.nStartPosition = nWritePosition  ; 
-        my_data.nOffsetPosition = nWritePosition + my_data.nLen; //fot next write
-        my_data.status = DATA_EXISTS ;
-         
+		my_data.nStartPosition = nWritePosition  ; 
+		my_data.nOffsetPosition = nWritePosition + my_data.nLen; //fot next write
+		my_data.status = DATA_EXISTS ;
+
 #ifdef _DEBUG_WRITE_
-        snprintf(szMsg, sizeof(szMsg), 
-                "[id:%d]    [%s-%d] Write nMyIndex[%ld] %s: want len[%d] nWritePosition [%d] my_data.nLastPosition [%d]", 
-                 0, __func__, __LINE__, nMyIndex, szRawData, my_data.nLen, nWritePosition, my_data.nOffsetPosition );
-        {AtomicPrint atomicPrint(szMsg);}
+		snprintf(szMsg, sizeof(szMsg), 
+				"[id:%d]    [%s-%d] Write nMyIndex[%ld] %s: want len[%d] nWritePosition [%d] my_data.nLastPosition [%d]", 
+				0, __func__, __LINE__, nMyIndex, szRawData, my_data.nLen, nWritePosition, my_data.nOffsetPosition );
+		{AtomicPrint atomicPrint(szMsg);}
 #endif
 
-        gSharedMemRingBuffer.SetData( nMyIndex, &my_data, nWritePosition, szRawData );
+		gSharedMemRingBuffer.SetData( nMyIndex, &my_data, nWritePosition, szRawData );
 
-        gSharedMemRingBuffer.Commit(0, nMyIndex); 
-    }
+		gSharedMemRingBuffer.Commit(0, nMyIndex); 
+	}
 
-    snprintf(szMsg, sizeof(szMsg), 
-            "*********************[id:%d]    [%s-%d] Write Done", 0, __func__, __LINE__ );
-    {AtomicPrint atomicPrint(szMsg);}
+	snprintf(szMsg, sizeof(szMsg), 
+			"*********************[id:%d]    [%s-%d] Write Done", 0, __func__, __LINE__ );
+	{AtomicPrint atomicPrint(szMsg);}
 
 }
 

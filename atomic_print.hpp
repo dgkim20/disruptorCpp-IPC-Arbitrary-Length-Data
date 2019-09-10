@@ -27,23 +27,23 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////////
 class AtomicPrint
 {
-    public:
-        AtomicPrint()
-        {
-            lock_mutex_.lock();
-        }
+public:
+	AtomicPrint()
+	{
+		lock_mutex_.lock();
+	}
 
-        AtomicPrint(string strMsg)
-        {
-            lock_mutex_.lock();
-            cout << strMsg <<"\n";
-        }
+	AtomicPrint(string strMsg)
+	{
+		lock_mutex_.lock();
+		cout << strMsg <<"\n";
+	}
 
-        ~AtomicPrint()
-        {
-            lock_mutex_.unlock();
-        }
+	~AtomicPrint()
+	{
+		lock_mutex_.unlock();
+	}
 
-    private:
-        static std::mutex lock_mutex_ ;
+private:
+	static std::mutex lock_mutex_ ;
 };
